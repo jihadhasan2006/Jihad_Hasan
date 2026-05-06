@@ -6,7 +6,7 @@
     <title>Premium Account Vault (Cloud)</title>
     <!-- এক্সেল লাইব্রেরি -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- ফায়ারবেস লাইব্রেরি (Compat version for HTML) -->
+    <!-- ফায়ারবেস লাইব্রেরি (HTML এর জন্য) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     <!-- গুগল ফন্ট -->
@@ -83,7 +83,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Data will appear here automatically from Firebase -->
+                <!-- ডাটা ফায়ারবেস থেকে এসে এখানে বসবে -->
             </tbody>
         </table>
     </div>
@@ -107,16 +107,21 @@
     
     let allData = [];
 
-    // ফায়ারবেস থেকে লাইভ ডাটা লোড করা (রিয়েলটাইম)
-    db.collection("SavedAccounts").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+    // ফায়ারবেস থেকে লাইভ ডাটা আনা (রিলোড দিলেও হারাবে না)
+    db.collection("SavedAccounts").onSnapshot((snapshot) => {
         allData = [];
-        const tableBody = document.querySelector('#dataTable tbody');
-        tableBody.innerHTML = '';
         
         snapshot.forEach((doc) => {
-            const item = doc.data();
-            allData.push(item);
-            
+            allData.push(doc.data());
+        });
+
+        // নতুন ডাটাগুলো অটোমেটিক সবার উপরে দেখানোর জন্য সাজানো
+        allData.sort((a, b) => (b.timeSort || 0) - (a.timeSort || 0));
+
+        const tableBody = document.querySelector('#dataTable tbody');
+        tableBody.innerHTML = '';
+
+        allData.forEach((item) => {
             const row = `<tr>
                 <td class="date-text">${item.Date}</td>
                 <td>${item.Username}</td>
@@ -126,13 +131,11 @@
             tableBody.insertAdjacentHTML('beforeend', row);
         });
 
-        // কানেকশন সাকসেস মেসেজ
         document.getElementById('statusBox').innerText = "🟢 Connected to Cloud (Live)";
         document.getElementById('statusBox').style.color = "#38ef7d";
     }, (error) => {
-        document.getElementById('statusBox').innerText = "🔴 Connection Error! Check Database Rules.";
+        document.getElementById('statusBox').innerText = "🔴 Firebase Rules Error! চেক করুন।";
         document.getElementById('statusBox').style.color = "#ef473a";
-        console.error("Firebase Error:", error);
     });
 
     // ফায়ারবেসে ডাটা সেভ করা
@@ -157,9 +160,8 @@
             Username: user,
             Password: pass,
             "2FA_Key": key,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+            timeSort: Date.now() // সিরিয়াল ঠিক রাখার জন্য
         }).then(() => {
-            // সেভ সফল হলে ইনপুট বক্স ক্লিয়ার হবে
             document.getElementById('userName').value = '';
             document.getElementById('secretKey').value = '';
             if (!document.getElementById('keepPass').checked) {
@@ -171,7 +173,7 @@
         });
     }
 
-    // এক্সেল ডাউনলোড করা (তারিখ অনুযায়ী আলাদা শিট)
+    // এক্সেল ডাউনলোড করা
     function downloadExcel() {
         if (allData.length === 0) {
             alert("⚠️ ডাউনলোড করার মতো কোনো ডাটা নেই!");
