@@ -3,279 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jonopriyo Nursery Profile</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Premium Account Vault (Cloud)</title>
+    <!-- এক্সেল লাইব্রেরি -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- ফায়ারবেস লাইব্রেরি (Compat version for HTML) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <!-- গুগল ফন্ট -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-image: url('https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            min-height: 100vh;
-        }
-
-        .header-bg {
-            background: transparent;
-            height: 180px;
-            width: 100%;
-        }
-
-        .container {
-            padding: 0 15px;
-        }
-
-        .profile-card {
-            background-color: rgba(255, 255, 255, 0.90);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            max-width: 400px;
-            margin: -100px auto 20px; 
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .logo-container {
-            width: 110px;
-            height: 110px;
-            background-color: white;
-            border-radius: 50%;
-            margin: -60px auto 10px;
-            padding: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .logo-container img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        h2 {
-            font-size: 38px;
-            color: #ff0000;
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-
-        .subtitle {
-            font-size: 20px;
-            color: #000000;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .description {
-            font-size: 14px;
-            color: #444;
-            line-height: 1.5;
-            margin-bottom: 30px;
-            padding: 0 10px;
-            font-weight: 500;
-        }
-
-        .links-section {
-            text-align: left;
-        }
-
-        .find-me {
-            font-size: 12px;
-            color: #555;
-            margin-bottom: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-            display: inline-block;
-        }
-
-        .link-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(253, 253, 253, 0.8); 
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #333;
-            transition: transform 0.2s, background 0.2s;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .link-item:hover {
-            background-color: rgba(255, 255, 255, 1);
-            transform: translateY(-2px);
-        }
-
-        .link-left {
-            display: flex;
-            align-items: center;
-        }
-
-        /* --- পেমেন্ট লোগোর সাইজ --- */
-        .payment-logo {
-            width: 28px;  
-            height: 28px;
-            object-fit: contain; 
-            margin-right: 15px; 
-            border-radius: 4px; 
-        }
-
-        /* --- ম্যাপ লোগোর সাইজ (এখানে ছোট করা হয়েছে) --- */
-        .map-logo {
-            width: 28px;  /* আগে ছিল 40px, এখন 28px করা হলো */
-            height: 28px; /* আগে ছিল 40px, এখন 28px করা হলো */
-            object-fit: contain; 
-            margin-right: 15px; 
-            border-radius: 4px; 
-        }
-        /* --------------------------------- */
-
-        .text-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .link-text {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .link-subtext {
-            font-size: 12px;
-            color: #666;
-            margin-top: 2px;
-        }
-
-        /* সোশ্যাল আইকন কালার */
-        .fa-whatsapp { color: #25D366; font-size: 24px; margin-right: 15px; }
-        .fa-facebook { color: #1877F2; font-size: 24px; margin-right: 15px; }
-        .fa-youtube { color: #FF0000; font-size: 24px; margin-right: 15px; }
-        
-        .arrow-icon {
-            color: #ccc;
-            font-size: 14px;
-        }
-        
-        .payment-section {
-            margin-top: 25px;
-        }
-
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { margin: 0; min-height: 100vh; background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); display: flex; justify-content: center; align-items: flex-start; padding: 50px 20px; color: #ffffff; }
+        .glass-container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); border-radius: 24px; padding: 40px; width: 100%; max-width: 850px; }
+        h2 { text-align: center; margin-top: 0; font-weight: 600; font-size: 28px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; margin-bottom: 10px; }
+        .cloud-tag { text-align: center; color: #00d2ff; font-size: 13px; margin-bottom: 30px; font-weight: 500; letter-spacing: 1px; }
+        .input-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 400; color: rgba(255, 255, 255, 0.8); }
+        input[type="text"] { width: 100%; padding: 16px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #ffffff; font-size: 16px; outline: none; transition: all 0.3s ease; }
+        input[type="text"]:focus { background: rgba(0, 0, 0, 0.3); border-color: #00d2ff; box-shadow: 0 0 15px rgba(0, 210, 255, 0.2); }
+        .checkbox-wrapper { display: flex; align-items: center; margin-top: 10px; }
+        .checkbox-wrapper input[type="checkbox"] { appearance: none; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-radius: 6px; margin-right: 10px; cursor: pointer; position: relative; transition: 0.3s; }
+        .checkbox-wrapper input[type="checkbox"]:checked { background-color: #00d2ff; border-color: #00d2ff; }
+        .checkbox-wrapper input[type="checkbox"]:checked::after { content: "✔"; position: absolute; color: #000; font-size: 14px; font-weight: bold; top: -1px; left: 3px; }
+        .checkbox-wrapper label { margin: 0; cursor: pointer; color: #00d2ff; font-weight: 500; }
+        .btn-group { display: flex; gap: 15px; margin-top: 35px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #ffffff; display: flex; justify-content: center; align-items: center; }
+        .btn-save { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .btn-save:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(56, 239, 125, 0.5); }
+        .btn-download { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
+        .btn-download:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0, 114, 255, 0.5); }
+        .table-wrap { margin-top: 40px; background: rgba(0, 0, 0, 0.2); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: rgba(255, 255, 255, 0.05); padding: 18px 20px; font-weight: 500; color: #00d2ff; text-transform: uppercase; font-size: 13px; }
+        td { padding: 16px 20px; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 14px; color: rgba(255, 255, 255, 0.9); word-break: break-all; }
+        tr:hover td { background: rgba(255, 255, 255, 0.03); }
+        .key-text { font-family: monospace; color: #a8ff78; letter-spacing: 1px; }
+        .date-text { color: #f6d365; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div class="header-bg"></div>
+<div class="glass-container">
+    <h2>Secure Data Vault</h2>
+    <div class="cloud-tag" id="statusBox">☁️ Connecting to Firebase...</div>
+    
+    <div class="input-group">
+        <label>USERNAME / EMAIL</label>
+        <input type="text" id="userName" placeholder="Enter your username" autocomplete="off">
+    </div>
 
-    <div class="container">
-        <div class="profile-card">
-            
-            <div class="logo-container">
-                <img src="578257463.jpg" alt="জনপ্রিয় নার্সারী লোগো">
-            </div>
-
-            <h2>জনপ্রিয় নার্সারী</h2>
-            <p class="subtitle">প্রোঃ মোঃ মিলন হাসান</p>
-            <p class="description">
-                এখানে উন্নত মানের দেশি-বিদেশী কলম চারা, পাইকারী ও খুচরা সুলভ মূল্যে ক্রয়-বিক্রয় করা হয়।
-            </p>
-
-            <div class="links-section">
-                <p class="find-me">Social & Contact</p>
-                
-                <a href="https://wa.me/8801309192565" target="_blank" class="link-item">
-                    <div class="link-left">
-                        <i class="fa-brands fa-whatsapp"></i>
-                        <span class="link-text">WhatsApp</span>
-                    </div>
-                    <i class="fa-solid fa-arrow-right arrow-icon"></i>
-                </a>
-
-                <a href="https://www.facebook.com/milon3718" target="_blank" class="link-item">
-                    <div class="link-left">
-                        <i class="fa-brands fa-facebook"></i>
-                        <span class="link-text">Facebook</span>
-                    </div>
-                    <i class="fa-solid fa-arrow-right arrow-icon"></i>
-                </a>
-
-                <a href="https://www.youtube.com/@jonoprionursery" target="_blank" class="link-item">
-                    <div class="link-left">
-                        <i class="fa-brands fa-youtube"></i>
-                        <span class="link-text">YouTube</span>
-                    </div>
-                    <i class="fa-solid fa-arrow-right arrow-icon"></i>
-                </a>
-
-                <a href="https://www.google.com/maps?q=24%C2%B041%2727.0%22N+89%C2%B024%2751.5%22E" target="_blank" class="link-item">
-                    <div class="link-left">
-                        <img src="https://cdn-icons-png.freepik.com/256/2642/2642499.png?semt=ais_white_label" alt="Google Map" class="map-logo">
-                        <span class="link-text">Location</span>
-                    </div>
-                    <i class="fa-solid fa-arrow-right arrow-icon"></i>
-                </a>
-
-                <div class="payment-section">
-                    <p class="find-me">Payment (Personal)</p>
-
-                    <a href="tel:*247#" class="link-item">
-                        <div class="link-left">
-                            <img src="https://static.vecteezy.com/system/resources/previews/068/842/080/non_2x/bkash-logo-horizontal-mobile-banking-app-icon-emblem-transparent-background-free-png.png" alt="bKash Logo" class="payment-logo">
-                            
-                            <div class="text-container">
-                                <span class="link-text">bKash (Personal)</span>
-                                <span class="link-subtext">01309-192565</span>
-                            </div>
-                        </div>
-                        <i class="fa-regular fa-copy arrow-icon"></i>
-                    </a>
-
-                    <a href="tel:*167#" class="link-item">
-                        <div class="link-left">
-                            <img src="https://i.logos-download.com/71056/15750-og-6a4b8476b9c45e0cae33ae85c28a4cf0.png/Nagad_Logo_horizontally_og.png" alt="Nagad Logo" class="payment-logo">
-                            
-                            <div class="text-container">
-                                <span class="link-text">Nagad (Personal)</span>
-                                <span class="link-subtext">0130-9192565</span>
-                            </div>
-                        </div>
-                        <i class="fa-regular fa-copy arrow-icon"></i>
-                    </a>
-
-                    <a href="tel:*322#" class="link-item">
-                        <div class="link-left">
-                            <img src="https://seeklogo.com/images/D/dutch-bangla-rocket-logo-B4D1CC458D-seeklogo.com.png" alt="Rocket Logo" class="payment-logo">
-                            
-                            <div class="text-container">
-                                <span class="link-text">Rocket (Personal)</span>
-                                <span class="link-subtext">0130-9192565</span>
-                            </div>
-                        </div>
-                        <i class="fa-regular fa-copy arrow-icon"></i>
-                    </a>
-                </div>
-
-            </div>
+    <div class="input-group">
+        <label>PASSWORD</label>
+        <input type="text" id="passWord" placeholder="Enter account password" autocomplete="off">
+        <div class="checkbox-wrapper">
+            <input type="checkbox" id="keepPass">
+            <label for="keepPass">Lock Password (পরবর্তী ইনপুটের জন্য রেখে দিন)</label>
         </div>
     </div>
+    
+    <div class="input-group">
+        <label>2FA SECRET KEY / LINK</label>
+        <input type="text" id="secretKey" placeholder="Paste Base32 Secret Key or URL" autocomplete="off">
+    </div>
+    
+    <div class="btn-group">
+        <button class="btn-save" onclick="saveToFirebase()">✦ Save to Cloud</button>
+        <button class="btn-download" onclick="downloadExcel()">⭳ Export Excel</button>
+    </div>
+
+    <div class="table-wrap">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>2FA Secret</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will appear here automatically from Firebase -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // আপনার ফায়ারবেস কনফিগ (হুবহু বসানো হয়েছে)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBjr_AEXXEPF4LrOmZIk1Pkwd2LgfR5_Xg",
+        authDomain: "data-vault-4967d.firebaseapp.com",
+        projectId: "data-vault-4967d",
+        storageBucket: "data-vault-4967d.firebasestorage.app",
+        messagingSenderId: "272709882645",
+        appId: "1:272709882645:web:6233b276f9704f7b938f1c",
+        measurementId: "G-PPNMG1LMQX"
+    };
+
+    // ফায়ারবেস চালু করা
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    let allData = [];
+
+    // ফায়ারবেস থেকে লাইভ ডাটা লোড করা (রিয়েলটাইম)
+    db.collection("SavedAccounts").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+        allData = [];
+        const tableBody = document.querySelector('#dataTable tbody');
+        tableBody.innerHTML = '';
+        
+        snapshot.forEach((doc) => {
+            const item = doc.data();
+            allData.push(item);
+            
+            const row = `<tr>
+                <td class="date-text">${item.Date}</td>
+                <td>${item.Username}</td>
+                <td>${item.Password}</td>
+                <td class="key-text">${item["2FA_Key"]}</td>
+            </tr>`;
+            tableBody.insertAdjacentHTML('beforeend', row);
+        });
+
+        // কানেকশন সাকসেস মেসেজ
+        document.getElementById('statusBox').innerText = "🟢 Connected to Cloud (Live)";
+        document.getElementById('statusBox').style.color = "#38ef7d";
+    }, (error) => {
+        document.getElementById('statusBox').innerText = "🔴 Connection Error! Check Database Rules.";
+        document.getElementById('statusBox').style.color = "#ef473a";
+        console.error("Firebase Error:", error);
+    });
+
+    // ফায়ারবেসে ডাটা সেভ করা
+    function saveToFirebase() {
+        const user = document.getElementById('userName').value.trim();
+        const pass = document.getElementById('passWord').value.trim();
+        let key = document.getElementById('secretKey').value.trim();
+
+        if (!user || !pass || !key) {
+            alert("⚠️ দয়া করে ইউজারনেম, পাসওয়ার্ড এবং ২এফএ—তিনটি তথ্যই পূরণ করুন।");
+            return;
+        }
+
+        if (key.includes('#')) key = key.split('#')[1];
+        if (key.includes('secret=')) key = key.split('secret=')[1].split('&')[0];
+
+        const today = new Date().toISOString().slice(0, 10);
+
+        // ফায়ারবেস ডাটাবেসে পাঠানো
+        db.collection("SavedAccounts").add({
+            Date: today,
+            Username: user,
+            Password: pass,
+            "2FA_Key": key,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+        }).then(() => {
+            // সেভ সফল হলে ইনপুট বক্স ক্লিয়ার হবে
+            document.getElementById('userName').value = '';
+            document.getElementById('secretKey').value = '';
+            if (!document.getElementById('keepPass').checked) {
+                document.getElementById('passWord').value = '';
+            }
+            document.getElementById('userName').focus();
+        }).catch((error) => {
+            alert("Error saving data: " + error.message);
+        });
+    }
+
+    // এক্সেল ডাউনলোড করা (তারিখ অনুযায়ী আলাদা শিট)
+    function downloadExcel() {
+        if (allData.length === 0) {
+            alert("⚠️ ডাউনলোড করার মতো কোনো ডাটা নেই!");
+            return;
+        }
+
+        const workbook = XLSX.utils.book_new();
+        const dataByDate = {};
+        
+        allData.forEach(item => {
+            if (!dataByDate[item.Date]) dataByDate[item.Date] = [];
+            dataByDate[item.Date].push({
+                Date: item.Date,
+                Username: item.Username,
+                Password: item.Password,
+                "2FA_Key": item["2FA_Key"]
+            });
+        });
+
+        for (const date in dataByDate) {
+            const worksheet = XLSX.utils.json_to_sheet(dataByDate[date]);
+            XLSX.utils.book_append_sheet(workbook, worksheet, date);
+        }
+        
+        const today = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(workbook, `Secure_Vault_${today}.xlsx`);
+    }
+</script>
 
 </body>
 </html>
-
